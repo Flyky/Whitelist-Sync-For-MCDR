@@ -1,0 +1,17 @@
+{
+    "id": "whitelist_sync",
+    "version": "0.1.0",
+    "name": "WhitelistSync",
+    "description": {
+        "en_us": "A MCDR plugin to sync whitelist with online text file",
+        "zh_cn": "一个与在线文本文件同步白名单的MCDR插件"
+    },
+    "author": ["Flyky"],
+    "link": "https://github.com/Flyky/Whitelist-Sync-For-MCDR",
+    "dependencies": {
+        "mcdreforged": ">=2.0.1"
+    },
+    "resources": [
+        "lang"
+    ]
+}

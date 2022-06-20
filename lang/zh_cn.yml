@@ -1,0 +1,4 @@
+whitelist_sync:
+  desc: "一个与在线文本文件同步白名单的MCDR插件"
+  info_msg: "同步白名单文件"
+  hover: "点击写入聊天栏"
