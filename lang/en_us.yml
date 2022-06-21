@@ -1,4 +1,4 @@
 whitelist_sync:
   desc: "A MCDR plugin to sync whitelist with online text file"
-  info_msg: "post/teleport weapon hands items"
+  info_msg: "sync whitelist with online text file"
   hover: "Click to write to chat bar"
