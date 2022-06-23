@@ -23,6 +23,12 @@ def print_help_message(source: CommandSource):
     )
     source.reply(msg)
 
+@new_thread('whitelist_sync')
+def init_listc(need_sleep=False):
+    global listc
+    if need_sleep: time.sleep(3)
+    whitelist = get_whitelist()
+    listc = ListForComparison(config.text_src, whitelist)
 
 def print_whitelist(source: CommandSource):
     global listc
@@ -83,7 +89,7 @@ def register_command(server: PluginServerInterface):
 
 
 def on_load(server: PluginServerInterface, old):
-    global config, listc
+    global config
     config = server.load_config_simple(CONFIG_FILE, target_class=Configuration)
     server.register_help_message(Prefix, {
         'en_us': 'sync whitelist with online text file',
@@ -92,13 +98,10 @@ def on_load(server: PluginServerInterface, old):
     register_command(server)
 
     if server.is_server_startup():
-        whitelist = get_whitelist()
-        listc = ListForComparison(config.text_src, whitelist)
+        init_listc()
         # sync(server.get_plugin_command_source())
     
 
 def on_server_startup(server: PluginServerInterface):
-    global listc
-    whitelist = get_whitelist()
-    listc = ListForComparison(config.text_src, whitelist)
+    init_listc(True)
     # sync(server.get_plugin_command_source())
