@@ -24,8 +24,10 @@ class ListForComparison:
         for url in self.online_src:
             req = requests.get(url).text
             req = req.splitlines()
-            raw_list.extend([id for id in req if not id.startswith('#')])
-        self.onlinelist = set(raw_list)
+            raw_list.extend(req)
+        
+        # 去除'#'开头的文本和空格行
+        self.onlinelist = set([id for id in raw_list if not id.startswith('#') and not id.isspace()])
 
     def compare_lists(self) -> Dict:
         result = {}

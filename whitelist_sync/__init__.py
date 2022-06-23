@@ -25,6 +25,7 @@ def print_help_message(source: CommandSource):
 
 
 def print_whitelist(source: CommandSource):
+    global listc
     listc.set_whitelist(get_whitelist())
     source.reply(f'§e[WhitelistSync] 以下为当前白名单({len(listc.whitelist)}): \n{listc.whitelist}')
 
@@ -90,15 +91,14 @@ def on_load(server: PluginServerInterface, old):
     })
     register_command(server)
 
-    # if server.is_server_startup():
-    #     whitelist = get_whitelist()
-    #     listc = ListForComparison(config.text_src, whitelist)
-    #     sync(server.get_plugin_command_source())
+    if server.is_server_startup():
+        whitelist = get_whitelist()
+        listc = ListForComparison(config.text_src, whitelist)
+        # sync(server.get_plugin_command_source())
     
 
 def on_server_startup(server: PluginServerInterface):
-    pass
-    # global listc
-    # whitelist = get_whitelist()
-    # listc = ListForComparison(config.text_src, whitelist)
+    global listc
+    whitelist = get_whitelist()
+    listc = ListForComparison(config.text_src, whitelist)
     # sync(server.get_plugin_command_source())
