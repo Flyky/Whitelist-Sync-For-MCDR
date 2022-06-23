@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os 
+import os, time
 from mcdreforged.api.all import *
 from whitelist_sync.config import Configuration
 from whitelist_sync.online_text import ListForComparison
-from whitelist_sync.util import get_whitelist
+from whitelist_sync.util import get_whitelist, msg_of_update_detail
 
 Prefix = '!!wls'
 CONFIG_FILE = 'WhitelistSync.json'
@@ -23,8 +23,16 @@ def print_help_message(source: CommandSource):
     )
     source.reply(msg)
 
+@new_thread('whitelist_sync')
+def init_listc(need_sleep=False):
+    global listc
+    if need_sleep: time.sleep(3)
+    whitelist = get_whitelist()
+    listc = ListForComparison(config.text_src, whitelist)
 
 def print_whitelist(source: CommandSource):
+    global listc
+    listc.set_whitelist(get_whitelist())
     source.reply(f'§e[WhitelistSync] 以下为当前白名单({len(listc.whitelist)}): \n{listc.whitelist}')
 
 
@@ -39,14 +47,16 @@ def sync(source: CommandSource):
     update_result = listc.compare_lists()
     source.get_server().logger.info(update_result)
     if update_result:
+        source.reply('§e[WhitelistSync] 同步白名单')
         rml = update_result.get('remove', [])
         apl = update_result.get('append', [])
         for id in rml:
             source.get_server().execute(f'whitelist remove {id}')
         for id in apl:
             source.get_server().execute(f'whitelist add {id}')
+        time.sleep(3)
         listc.set_whitelist(get_whitelist())
-        source.reply('§e[WhitelistSync] 同步白名单')
+        source.reply(msg_of_update_detail(update_result))
     else:
         source.reply('§e[WhitelistSync] 白名单无更新')
 
@@ -79,7 +89,7 @@ def register_command(server: PluginServerInterface):
 
 
 def on_load(server: PluginServerInterface, old):
-    global config, listc
+    global config
     config = server.load_config_simple(CONFIG_FILE, target_class=Configuration)
     server.register_help_message(Prefix, {
         'en_us': 'sync whitelist with online text file',
@@ -88,13 +98,10 @@ def on_load(server: PluginServerInterface, old):
     register_command(server)
 
     if server.is_server_startup():
-        whitelist = get_whitelist()
-        listc = ListForComparison(config.text_src, whitelist)
-        sync(server.get_plugin_command_source())
+        init_listc()
+        # sync(server.get_plugin_command_source())
     
 
 def on_server_startup(server: PluginServerInterface):
-    global listc
-    whitelist = get_whitelist()
-    listc = ListForComparison(config.text_src, whitelist)
-    sync(server.get_plugin_command_source())
+    init_listc(True)
+    # sync(server.get_plugin_command_source())

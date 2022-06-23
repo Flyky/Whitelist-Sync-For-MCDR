@@ -25,7 +25,9 @@ class ListForComparison:
             req = requests.get(url).text
             req = req.splitlines()
             raw_list.extend(req)
-        self.onlinelist = set(raw_list)
+        
+        # 去除'#'开头的文本和空格行
+        self.onlinelist = set([id for id in raw_list if not id.startswith('#') and not id.isspace()])
 
     def compare_lists(self) -> Dict:
         result = {}
@@ -33,4 +35,6 @@ class ListForComparison:
             return {}
         result["remove"] = list(self.whitelist - self.onlinelist)
         result["append"] = list(self.onlinelist - self.whitelist)
+        if len(result["remove"]) == 0 and len(result["append"]) == 0:
+            return {}
         return result
