@@ -24,7 +24,7 @@ class ListForComparison:
         for url in self.online_src:
             req = requests.get(url).text
             req = req.splitlines()
-            raw_list.extend(req)
+            raw_list.extend([id for id in req if not id.startswith('#')])
         self.onlinelist = set(raw_list)
 
     def compare_lists(self) -> Dict:
@@ -33,4 +33,6 @@ class ListForComparison:
             return {}
         result["remove"] = list(self.whitelist - self.onlinelist)
         result["append"] = list(self.onlinelist - self.whitelist)
+        if len(result["remove"]) == 0 and len(result["append"]) == 0:
+            return {}
         return result

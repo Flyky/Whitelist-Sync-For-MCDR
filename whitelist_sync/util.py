@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mcdreforged.plugin.server_interface import PluginServerInterface
+from mcdreforged.api.rtext import *
 from typing import List
 
 
@@ -21,3 +22,14 @@ def get_whitelist():
     else:
         pass
     return parse_whitelist_str(wl_str)
+
+def msg_of_update_detail(_dict: Dict):
+    if not _dict:
+        return ''
+    if _dict.get('remove', None):
+        _remove = RText(f'移除id: {_dict["remove"]}\n')
+    if _dict.get('append', None):
+        _append = RText(f'新增id: {_dict["append"]}')
+    return RTextList(
+        _remove, _append
+    )
